@@ -4,7 +4,7 @@ from .models import City
 from django.conf import settings
 from django.contrib import messages
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 
 def index(request):
@@ -83,4 +83,58 @@ def delete_city(request, id):
 
     city.delete()
 
+    return redirect('index')
+
+
+def city_detail(request, id):
+    city = get_object_or_404(City, id=id)
+    api_key = settings.WEATHER_API
+    
+    url = "http://api.openweathermap.org/data/2.5/forecast"
+    params = {
+        'q': city.name,
+        'units': 'metric',
+        'appid': api_key,
+        'lang': 'tr'
+    }
+    
+    try:
+        response = requests.get(url, params=params).json()
+
+        if str(response.get('cod')) == "200":
+            raw_data = response.get('list')
+            
+            daily_data = {}
+            
+            for item in raw_data:
+                date_str = item['dt_txt'].split(' ')[0]
+                
+                if date_str not in daily_data:
+                    daily_data[date_str] = []
+                
+                daily_data[date_str].append(item)
+            
+            daily_forecasts = []
+            for date_str, items in daily_data.items():
+                date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+                daily_forecasts.append({
+                    'date': date_str,      
+                    'date_obj': date_obj,  
+                    'items': items
+                })
+            daily_forecasts.sort(key=lambda x: x['date'])
+
+            context = {
+                'city': city,
+                'daily_forecasts': daily_forecasts 
+            }
+            return render(request, 'weather/city_detail.html', context)
+            
+        else:
+            hata_mesaji = response.get('message', 'Bilinmeyen hata')
+            messages.warning(request, f"Hata oluştu: {hata_mesaji}")
+            
+    except requests.exceptions.RequestException:
+        messages.error(request, "İnternet bağlantı hatası.")
+        
     return redirect('index')

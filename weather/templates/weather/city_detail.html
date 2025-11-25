@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ city.name }} - Detaylı Hava Durumu</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+            color: white;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 25px;
+        }
+
+        /* Back Button */
+        .back-btn {
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 10px 18px;
+            color: #fff;
+            border-radius: 12px;
+            display: inline-block;
+            transition: 0.25s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        /* Section Header (Today, Tomorrow...) */
+        .day-section {
+            margin-bottom: 35px;
+        }
+
+        .day-title {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        /* Horizontal scroll container */
+        .forecast-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            padding-bottom: 10px;
+        }
+
+        .forecast-card {
+            min-width: 140px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+            flex-shrink: 0;
+            transition: 0.25s ease;
+        }
+
+        .forecast-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.18);
+        }
+
+        .time {
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .icon img {
+            width: 55px;
+            margin-bottom: 8px;
+        }
+
+        .temp {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .desc {
+            font-size: 13px;
+            opacity: 0.9;
+            text-transform: capitalize;
+        }
+
+        .forecast-scroll::-webkit-scrollbar {
+            height: 8px; 
+        }
+
+        .forecast-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1); 
+            border-radius: 10px;
+        }
+
+        .forecast-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.5); 
+            border-radius: 10px;
+        }
+
+        .forecast-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <a href="{% url 'index' %}" class="back-btn">← Geri dön</a>
+
+        <h1 style="margin-top: 25px; font-size: 34px;">{{ city.name }}</h1>
+        <p style="opacity: .9; margin-bottom: 25px;">5 Günlük Hava Tahmini</p>
+
+        {% for day in daily_forecasts %}
+        <div class="day-section">
+
+            {% with day_date=day.date %}
+                {% now "Y-m-d" as today %}
+
+                {% if day_date == today %}
+                    <div class="day-title">Bugün</div>
+                {% else %}
+                    <div class="day-title">
+                        {{ day.date_obj|date:"l" }} 
+                        <span style="font-size: 16px; opacity: 0.7; font-weight: normal;">
+                            {{ day.date_obj|date:"d F" }}
+                        </span>
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <div class="forecast-scroll">
+                {% for item in day.items %}
+                <div class="forecast-card">
+
+                    <div class="time">
+                        {{ item.dt_txt|slice:"11:16" }}
+                    </div>
+
+                    <div class="icon">
+                        <img src="http://openweathermap.org/img/wn/{{ item.weather.0.icon }}@2x.png">
+                    </div>
+
+                    <div class="temp">
+                        {{ item.main.temp|floatformat:1 }}°C
+                    </div>
+
+                    <div class="desc">
+                        {{ item.weather.0.description }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+</body>
+</html>
