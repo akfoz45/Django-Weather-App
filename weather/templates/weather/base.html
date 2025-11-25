@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 40px 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 550px;
+        }
+
+        .title {
+            text-align: center;
+            color: white;
+            font-size: 34px;
+            font-weight: 600;
+            margin-bottom: 35px;
+        }
+
+        .weather-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 18px;
+            padding: 25px 30px;
+            margin-bottom: 25px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s ease;
+        }
+
+        .weather-card:hover {
+            transform: scale(1.02);
+        }
+
+        .left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .city {
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .temp {
+            font-size: 22px;
+            font-weight: 400;
+            margin-top: 5px;
+        }
+
+        .desc {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .icon img {
+            width: 85px;
+        }
+
+        /* --- YENİ EKLENEN CSS: Silme Butonu Stili --- */
+        .delete-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 24px;
+            cursor: pointer;
+            margin-left: 20px;
+            transition: color 0.3s ease;
+            padding: 5px;
+        }
+
+        .delete-btn:hover {
+            color: #ff4d4d; /* Üzerine gelince kırmızı olur */
+        }
+        /* ------------------------------------------- */
+
+        .add-city-form {
+            margin-top: 30px;
+            display: flex;
+        }
+
+        .add-city-form input {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 10px 0 0 10px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .add-city-form button {
+            padding: 12px 20px;
+            background: #ffffff;
+            border: none;
+            cursor: pointer;
+            border-radius: 0 10px 10px 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .add-city-form button:hover {
+            background: #f1f1f1;
+        }
+
+        .message-box {
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        color: white;
+        text-align: center;
+        }
+
+        .warning { background-color: #ff9800; } 
+        .error { background-color: #f44336; }   
+        .success { background-color: #4caf50; } 
+
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <h1 class="title">🌤 Weather App</h1>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message-box {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% for weather in weather_data %}
+        <div class="weather-card">
+            <div class="left">
+                <span class="city">{{ weather.city.name }}</span>
+                <span class="temp">{{ weather.temperature }}°C</span>
+                <span class="desc">{{ weather.description }}</span>
+                
+                <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">
+                    <i class="far fa-clock"></i> 
+                    Son Güncelleme: {{ weather.city.last_updated|date:"H:i" }}
+                    
+                    {% if weather.hata_var %}
+                        <br>
+                        <span style="color: #ffcccb; font-weight: bold;">
+                            ⚠️ Güncellenemedi (Veri eski olabilir)
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div style="display: flex; align-items: center;">
+                <div class="icon">
+                    <img src="http://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="">
+                </div>
+                
+                <!-- YENİ EKLENEN HTML: Silme Butonu -->
+                <a href="{% url 'delete_city' weather.city.id %}" style="text-decoration: none;">
+                    <button class="delete-btn" title="Şehri Sil">×</button>
+                </a>
+                <!-- ------------------------------- -->
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Şehir ekleme formu -->
+        <form class="add-city-form" method="POST">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="Şehir ekle..." required>
+            <button type="submit">Ekle</button>
+        </form>
+
+    </div>
+</body>
+</html>
