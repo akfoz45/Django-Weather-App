@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -10,227 +11,7 @@
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Poppins", sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            padding: 40px 10px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 550px;
-        }
-
-        .title {
-            text-align: center;
-            color: white;
-            font-size: 34px;
-            font-weight: 600;
-            margin-bottom: 25px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .add-city-form {
-            margin-bottom: 10px; 
-            display: flex;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .add-city-form input {
-            flex: 1;
-            padding: 15px 20px;
-            border: none;
-            outline: none;
-            font-size: 16px;
-            color: #333;
-        }
-
-        .geo-btn {
-            background: #ffffff;
-            border: none;
-            cursor: pointer;
-            padding: 0 15px;
-            font-size: 20px;
-            color: #4facfe;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-left: 1px solid #f0f0f0;
-        }
-
-        .geo-btn:hover {
-            color: #00c6fb;
-            background-color: #f8f9fa;
-        }
-
-        .add-city-form button[type="submit"] {
-            padding: 15px 30px;
-            background: #333;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: background 0.3s;
-        }
-
-        .add-city-form button[type="submit"]:hover {
-            background: #555;
-        }
-
-        .mini-spinner {
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #4facfe;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            display: none;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .map-toggle-btn {
-            width: 100%;
-            padding: 12px;
-            background: rgba(255,255,255,0.25);
-            border: 1px solid rgba(255,255,255,0.4);
-            color: white;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 500;
-            margin-bottom: 20px;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-size: 15px;
-        }
-        
-        .map-toggle-btn:hover {
-            background: rgba(255,255,255,0.35);
-        }
-        
-        #map-container {
-            height: 0; 
-            overflow: hidden;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            transition: height 0.4s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        #map {
-            height: 100%;
-            width: 100%;
-        }
-
-        .weather-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 18px;
-            padding: 25px 30px;
-            margin-bottom: 25px;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-
-        .weather-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-        }
-
-        .left {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .city {
-            font-size: 28px;
-            font-weight: 600;
-        }
-
-        .temp {
-            font-size: 22px;
-            font-weight: 400;
-            margin-top: 5px;
-        }
-
-        .desc {
-            font-size: 16px;
-            opacity: 0.9;
-            text-transform: capitalize;
-        }
-
-        .icon img {
-            width: 85px;
-            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1));
-        }
-
-        .delete-btn {
-            background: transparent;
-            border: none;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 28px;
-            cursor: pointer;
-            margin-left: 15px;
-            transition: color 0.3s ease;
-            line-height: 1;
-        }
-
-        .delete-btn:hover {
-            color: #ff6b6b;
-        }
-
-        .message-box {
-            padding: 15px;
-            margin-bottom: 25px;
-            border-radius: 10px;
-            color: white;
-            text-align: center;
-            font-weight: 500;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .warning { background-color: #ffa502; } 
-        .error { background-color: #ff4757; }   
-        .success { background-color: #2ed573; }
-        .info { background-color: #1e90ff; }
-
-        #geo-status {
-            text-align: center;
-            margin-bottom: 15px;
-            color: rgba(255,255,255,0.9);
-            font-size: 14px;
-            min-height: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <div class="container">
@@ -240,22 +21,25 @@
         <form class="add-city-form" method="POST">
             {% csrf_token %}
             <input type="text" name="name" placeholder="Şehir adı girin..." required>
+            
             <button type="button" class="geo-btn" onclick="getLocation()" id="loc-btn" title="Konumumu Bul">
                 <span id="loc-icon"><i class="fas fa-map-marker-alt"></i></span>
                 <div class="mini-spinner" id="loc-spinner"></div>
             </button>
+
             <button type="submit">EKLE</button>
         </form>
 
         <p id="geo-status"></p>
 
-        <button class="map-toggle-btn" onclick="toggleMap()">
+        <button class="map-toggle-btn" onclick="toggleMap(cityLocations)">
             <i class="fas fa-map"></i> Haritayı Göster / Gizle
         </button>
 
         <div id="map-container">
             <div id="map"></div>
         </div>
+
         {% if messages %}
             {% for message in messages %}
                 <div class="message-box {{ message.tags }}">
@@ -265,7 +49,7 @@
         {% endif %}
 
         {% for weather in weather_data %}
-        <div class="weather-card">
+        <div class="weather-card {{ weather.weather_class }}">
             <div class="left">
                 <span class="city">
                     <a href="{% url 'city_detail' weather.city.id %}" style="color: inherit; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,0.5);" title="Detaylı Tahmin">
@@ -303,109 +87,22 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
+    <script src="{% static 'js/main.js' %}"></script>
+
     <script>
-        let mapInitialized = false;
-        let map;
-
-        function toggleMap() {
-            const container = document.getElementById('map-container');
-            
-            if (container.style.height === '' || container.style.height === '0px') {
-                container.style.height = '300px'; 
-                
-                if (!mapInitialized) {
-                    setTimeout(initMap, 400); 
-                }
-            } else {
-                container.style.height = '0px'; 
-            }
-        }
-
-        function initMap() {
-            map = L.map('map').setView([39.0, 35.0], 5);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-
-            const cityLocations = [
-                {% for weather in weather_data %}
-                    {% if weather.city.lat and weather.city.lon %}
-                    {
-                        name: "{{ weather.city.name|escapejs }}",
-                        lat: {{ weather.city.lat|default:"0" }},
-                        lon: {{ weather.city.lon|default:"0" }},
-                        temp: "{{ weather.temperature }}",
-                        desc: "{{ weather.description|title }}"
-                    },
-                    {% endif %}
-                {% endfor %}
-            ];
-
-            cityLocations.forEach(city => {
-                L.marker([city.lat, city.lon])
-                .addTo(map)
-                .bindPopup(`<b>${city.name}</b><br>${city.temp}°C, ${city.desc}`);
-            });
-            
-            mapInitialized = true;
-        }
-
-
-        function getLocation() {
-            const status = document.getElementById("geo-status");
-            const btn = document.getElementById("loc-btn");
-            const icon = document.getElementById("loc-icon");
-            const spinner = document.getElementById("loc-spinner");
-
-            btn.disabled = true;
-            icon.style.display = "none";
-            spinner.style.display = "block";
-            
-            status.innerHTML = "Konum alınıyor...";
-
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
-            } else {
-                status.innerHTML = "Tarayıcınız konum özelliğini desteklemiyor.";
-                resetBtn();
-            }
-        }
-
-        function showPosition(position) {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            window.location.href = `/?lat=${lat}&lon=${lon}`;
-        }
-
-        function showError(error) {
-            const status = document.getElementById("geo-status");
-            
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    status.innerHTML = "Lütfen konum izni verin.";
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    status.innerHTML = "Konum bilgisi bulunamadı.";
-                    break;
-                case error.TIMEOUT:
-                    status.innerHTML = "İstek zaman aşımına uğradı.";
-                    break;
-                default:
-                    status.innerHTML = "Bilinmeyen bir hata oluştu.";
-            }
-            resetBtn();
-        }
-
-        function resetBtn() {
-            const btn = document.getElementById("loc-btn");
-            const icon = document.getElementById("loc-icon");
-            const spinner = document.getElementById("loc-spinner");
-
-            btn.disabled = false;
-            icon.style.display = "block";
-            spinner.style.display = "none";
-        }
+        const cityLocations = [
+            {% for weather in weather_data %}
+                {% if weather.city.lat and weather.city.lon %}
+                {
+                    name: "{{ weather.city.name|escapejs }}",
+                    lat: {{ weather.city.lat|default:"0" }},
+                    lon: {{ weather.city.lon|default:"0" }},
+                    temp: "{{ weather.temperature }}",
+                    desc: "{{ weather.description|title }}"
+                },
+                {% endif %}
+            {% endfor %}
+        ];
     </script>
 </body>
 </html>

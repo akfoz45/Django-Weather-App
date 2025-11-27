@@ -100,8 +100,25 @@ def index(request):
                     'temperature': city.temperature,
                     'description': city.description,
                     'icon': city.icon,
+                    'weather_main':'default',
                     'error': error,
                 }
+        if city.icon:
+            code = city.icon[:2]
+            if code == '01':
+                city_weather['weather_class'] = 'clear'
+            elif code in ['02', '03', '04']:
+                city_weather['weather_class'] = 'clouds'
+            elif code in ['09', '10']:
+                city_weather['weather_class'] = 'rain'
+            elif code == '11':
+                city_weather['weather_class'] = 'thunder'
+            elif code == '13':
+                city_weather['weather_class'] = 'snow'
+            elif code == '50':
+                city_weather['weather_class'] = 'mist'
+            else:
+                city_weather['weather_class'] = 'default'
         weather_data.append(city_weather)
 
     context = {
