@@ -27,7 +27,9 @@ def index(request):
                             temperature=response["main"]["temp"],
                             description=response["weather"][0]["description"],
                             icon=response['weather'][0]['icon'],
-                            last_updated=timezone.now()
+                            last_updated=timezone.now(),
+                            lat=lat,
+                            lon=lon,
                         )
                     messages.success(request, f"Konumunuz ({city_name}) başarıyla eklendi.")
                 else:
@@ -55,7 +57,9 @@ def index(request):
                             temperature=response["main"]["temp"],
                             description=response["weather"][0]["description"],
                             icon=response['weather'][0]['icon'],
-                            last_updated=timezone.now()
+                            last_updated=timezone.now(),
+                            lat=response['coord']['lat'],
+                            lon=response['coord']['lon'],
                         )
                         messages.success(request, f"{city_name_formatted} başarıyla eklendi.")
                     else:
