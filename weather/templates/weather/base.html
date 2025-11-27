@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather App</title>
+    <title>Hava Durumu</title>
 
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         * {
@@ -34,24 +34,98 @@
             color: white;
             font-size: 34px;
             font-weight: 600;
-            margin-bottom: 35px;
+            margin-bottom: 25px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
+        /* --- FORM TASARIMI (ARTIK ÜSTTE) --- */
+        .add-city-form {
+            /* margin-top yerine margin-bottom verdik */
+            margin-bottom: 10px; 
+            display: flex;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .add-city-form input {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            color: #333;
+        }
+
+        /* Konum Butonu */
+        .geo-btn {
+            background: #ffffff;
+            border: none;
+            cursor: pointer;
+            padding: 0 15px;
+            font-size: 20px;
+            color: #4facfe;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-left: 1px solid #f0f0f0;
+        }
+
+        .geo-btn:hover {
+            color: #00c6fb;
+            background-color: #f8f9fa;
+        }
+
+        /* Ekle Butonu */
+        .add-city-form button[type="submit"] {
+            padding: 15px 30px;
+            background: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .add-city-form button[type="submit"]:hover {
+            background: #555;
+        }
+
+        /* Spinner Animasyonu */
+        .mini-spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4facfe;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- KART TASARIMI --- */
         .weather-card {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             border-radius: 18px;
             padding: 25px 30px;
-            margin-bottom: 25px;
+            margin-bottom: 25px; /* Kartlar arası boşluk */
             color: white;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
         .weather-card:hover {
-            transform: scale(1.02);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
         }
 
         .left {
@@ -73,74 +147,80 @@
         .desc {
             font-size: 16px;
             opacity: 0.9;
+            text-transform: capitalize;
         }
 
         .icon img {
             width: 85px;
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1));
         }
 
         .delete-btn {
             background: transparent;
             border: none;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 24px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 28px;
             cursor: pointer;
-            margin-left: 20px;
+            margin-left: 15px;
             transition: color 0.3s ease;
-            padding: 5px;
+            line-height: 1;
         }
 
         .delete-btn:hover {
-            color: #ff4d4d; /* Üzerine gelince kırmızı olur */
-        }
-        /* ------------------------------------------- */
-
-        .add-city-form {
-            margin-top: 30px;
-            display: flex;
+            color: #ff6b6b;
         }
 
-        .add-city-form input {
-            flex: 1;
-            padding: 12px 15px;
-            border: none;
-            border-radius: 10px 0 0 10px;
-            outline: none;
-            font-size: 16px;
-        }
-
-        .add-city-form button {
-            padding: 12px 20px;
-            background: #ffffff;
-            border: none;
-            cursor: pointer;
-            border-radius: 0 10px 10px 0;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .add-city-form button:hover {
-            background: #f1f1f1;
-        }
-
+        /* --- MESAJ KUTULARI --- */
         .message-box {
-        padding: 15px;
-        margin-bottom: 20px;
-        border-radius: 10px;
-        color: white;
-        text-align: center;
+            padding: 15px;
+            margin-bottom: 25px; /* Alttaki karta yapışmasın */
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            animation: fadeIn 0.5s ease;
         }
 
-        .warning { background-color: #ff9800; } 
-        .error { background-color: #f44336; }   
-        .success { background-color: #4caf50; } 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
+        .warning { background-color: #ffa502; } 
+        .error { background-color: #ff4757; }   
+        .success { background-color: #2ed573; }
+        .info { background-color: #1e90ff; }
+
+        /* Hata Mesajı Metni (Konum için) */
+        #geo-status {
+            text-align: center;
+            margin-bottom: 20px; /* Form ile mesajlar arası boşluk */
+            color: rgba(255,255,255,0.9);
+            font-size: 14px;
+            min-height: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
 
-        <h1 class="title">🌤 Weather App</h1>
+        <h1 class="title">🌤 Hava Durumu</h1>
+
+        <form class="add-city-form" method="POST">
+            {% csrf_token %}
+            
+            <input type="text" name="name" placeholder="Şehir adı girin..." required>
+            
+            <button type="button" class="geo-btn" onclick="getLocation()" id="loc-btn" title="Konumumu Bul">
+                <span id="loc-icon"><i class="fas fa-map-marker-alt"></i></span>
+                <div class="mini-spinner" id="loc-spinner"></div>
+            </button>
+
+            <button type="submit">EKLE</button>
+        </form>
+
+        <p id="geo-status"></p>
 
         {% if messages %}
             {% for message in messages %}
@@ -154,47 +234,94 @@
         <div class="weather-card">
             <div class="left">
                 <span class="city">
-                    <a href="{% url 'city_detail' weather.city.id %}" style="color: inherit; text-decoration: none; border-bottom: 1px dashed white;" title="Detaylar için tıkla">
+                    <a href="{% url 'city_detail' weather.city.id %}" style="color: inherit; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,0.5);" title="Detaylı Tahmin">
                         {{ weather.city.name }}
                     </a>
-                </span>                
+                </span>
                 <span class="temp">{{ weather.temperature }}°C</span>
                 <span class="desc">{{ weather.description }}</span>
                 
-                <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">
+                <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;">
                     <i class="far fa-clock"></i> 
-                    Son Güncelleme: {{ weather.city.last_updated|date:"H:i" }}
+                    {{ weather.city.last_updated|date:"H:i" }}
                     
-                    {% if weather.hata_var %}
+                    {% if weather.error %}
                         <br>
                         <span style="color: #ffcccb; font-weight: bold;">
-                            ⚠️ Güncellenemedi (Veri eski olabilir)
+                            ⚠️ Güncellenemedi
                         </span>
                     {% endif %}
                 </div>
             </div>
-            
+
             <div style="display: flex; align-items: center;">
                 <div class="icon">
-                    <img src="http://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="">
+                    <img src="http://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="weather-icon">
                 </div>
-                
-                <!-- YENİ EKLENEN HTML: Silme Butonu -->
                 <a href="{% url 'delete_city' weather.city.id %}" style="text-decoration: none;">
                     <button class="delete-btn" title="Şehri Sil">×</button>
                 </a>
-                <!-- ------------------------------- -->
             </div>
         </div>
         {% endfor %}
 
-        <!-- Şehir ekleme formu -->
-        <form class="add-city-form" method="POST">
-            {% csrf_token %}
-            <input type="text" name="name" placeholder="Şehir ekle..." required>
-            <button type="submit">Ekle</button>
-        </form>
-
     </div>
+
+    <script>
+        function getLocation() {
+            const status = document.getElementById("geo-status");
+            const btn = document.getElementById("loc-btn");
+            const icon = document.getElementById("loc-icon");
+            const spinner = document.getElementById("loc-spinner");
+
+            btn.disabled = true;
+            icon.style.display = "none";
+            spinner.style.display = "block";
+            
+            status.innerHTML = "Konum alınıyor...";
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                status.innerHTML = "Tarayıcınız konum özelliğini desteklemiyor.";
+                resetBtn();
+            }
+        }
+
+        function showPosition(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            window.location.href = `/?lat=${lat}&lon=${lon}`;
+        }
+
+        function showError(error) {
+            const status = document.getElementById("geo-status");
+            
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    status.innerHTML = "Lütfen konum izni verin.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    status.innerHTML = "Konum bilgisi bulunamadı.";
+                    break;
+                case error.TIMEOUT:
+                    status.innerHTML = "İstek zaman aşımına uğradı.";
+                    break;
+                default:
+                    status.innerHTML = "Bilinmeyen bir hata oluştu.";
+            }
+            resetBtn();
+        }
+
+        function resetBtn() {
+            const btn = document.getElementById("loc-btn");
+            const icon = document.getElementById("loc-icon");
+            const spinner = document.getElementById("loc-spinner");
+
+            btn.disabled = false;
+            icon.style.display = "block";
+            spinner.style.display = "none";
+        }
+    </script>
 </body>
 </html>

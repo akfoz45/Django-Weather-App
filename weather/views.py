@@ -9,6 +9,34 @@ from datetime import timedelta, datetime
 
 def index(request):
     api_key = settings.WEATHER_API
+    
+    if request.method == 'GET' and 'lat' in request.GET and 'lon' in request.GET:
+        lat = request.GET.get('lat')
+        lon = request.GET.get('lon')
+
+        geo_url = f"http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}"
+
+        try:
+            response = requests.get(geo_url).json()
+            if response.get('cod') == 200:
+                city_name = response['name']
+
+                if not City.objects.filter(name=city_name).exists():
+                    City.objects.create(
+                            name=city_name,
+                            temperature=response["main"]["temp"],
+                            description=response["weather"][0]["description"],
+                            icon=response['weather'][0]['icon'],
+                            last_updated=timezone.now()
+                        )
+                    messages.success(request, f"Konumunuz ({city_name}) başarıyla eklendi.")
+                else:
+                    messages.info(request, f"{city_name} zaten listenizde mevcut.")
+                
+                return redirect('index')
+
+        except requests.exceptions.RequestException:
+            messages.error(request, "Konum alınırken bağlantı hatası oluştu.")
 
     if request.method == 'POST':
         city_name = request.POST.get("name")
