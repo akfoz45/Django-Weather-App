@@ -1,3 +1,12 @@
+:root {
+    --bg-dark: #0f172a;       
+    --panel-bg: #1e293b;      
+    --accent-color: #38bdf8;  
+    --text-main: #f1f5f9;     
+    --text-sub: #94a3b8;      
+    --border-color: #334155;  
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -9,268 +18,330 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    padding: 40px 10px;
+    padding: 40px 20px;
     
-    background: linear-gradient(135deg, #3a7bd5, #00d2ff);
-    background-size: 200% 200%;
-    animation: gradientBG 15s ease infinite;
-    
-    color: white; 
-}
-
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    background-color: var(--bg-dark);
+    color: var(--text-main);
 }
 
 .container {
     width: 100%;
-    max-width: 550px;
+    max-width: 900px; 
+    
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    align-content: start;
+}
+
+.title, .add-city-form, .map-toggle-btn, #map-container, .message-box, #geo-status {
+    grid-column: 1 / -1; 
 }
 
 .title {
     text-align: center;
-    color: white;
-    font-size: 34px;
-    font-weight: 600;
+    color: var(--text-main);
+    font-size: 45px; 
+    font-weight: 700;
     margin-bottom: 25px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    letter-spacing: -1px;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
 .add-city-form {
     margin-bottom: 10px; 
     display: flex;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    background: var(--panel-bg); 
     border-radius: 12px;
-    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    border: 1px solid var(--border-color);
+    position: relative;
+    z-index: 1001;
 }
 
 .add-city-form input {
     flex: 1;
-    padding: 15px 20px;
+    width: 100%;
+    padding: 16px 20px; 
     border: none;
     outline: none;
     font-size: 16px;
-    color: #333;
+    color: var(--text-main); 
+    background: transparent;
+    border-radius: 12px 0 0 12px;
 }
+.add-city-form input::placeholder { color: var(--text-sub); }
 
 .geo-btn {
-    background: #ffffff;
+    background: transparent;
     border: none;
     cursor: pointer;
     padding: 0 15px;
-    font-size: 20px;
-    color: #4facfe;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-left: 1px solid #f0f0f0;
+    font-size: 18px;
+    color: var(--text-sub);
+    transition: color 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    border-left: 1px solid var(--border-color);
 }
-
-.geo-btn:hover {
-    color: #00c6fb;
-    background-color: #f8f9fa;
-}
+.geo-btn:hover { color: var(--accent-color); }
 
 .add-city-form button[type="submit"] {
-    padding: 15px 30px;
-    background: #333;
-    color: white;
+    padding: 0 30px; 
+    background: var(--accent-color);
+    color: var(--bg-dark); 
     border: none;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
-    transition: background 0.3s;
+    border-radius: 0 12px 12px 0;
+    transition: background 0.2s;
+    letter-spacing: 0.5px;
 }
-
-.add-city-form button[type="submit"]:hover {
-    background: #555;
-}
+.add-city-form button[type="submit"]:hover { filter: brightness(1.1); }
 
 .mini-spinner {
-    width: 20px;
-    height: 20px;
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #4facfe;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    display: none;
+    width: 18px; height: 18px;
+    border: 2px solid var(--border-color); border-top: 2px solid var(--accent-color);
+    border-radius: 50%; animation: spin 1s linear infinite; display: none;
 }
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .map-toggle-btn {
     width: 100%;
     padding: 12px;
-    background: rgba(255,255,255,0.25);
-    border: 1px solid rgba(255,255,255,0.4);
-    color: white;
+    background: var(--panel-bg);
+    color: var(--text-sub);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     cursor: pointer;
-    font-weight: 500;
-    margin-bottom: 20px;
-    transition: 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    font-size: 15px;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 25px;
+    transition: 0.2s;
 }
-
-.map-toggle-btn:hover {
-    background: rgba(255,255,255,0.35);
+.map-toggle-btn:hover { 
+    border-color: var(--accent-color); 
+    color: var(--accent-color);
 }
 
 #map-container {
-    height: 0; 
-    overflow: hidden;
-    border-radius: 15px;
-    margin-bottom: 25px;
-    transition: height 0.4s ease;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    height: 0; overflow: hidden; border-radius: 15px; margin-bottom: 25px;
+    transition: height 0.4s ease; border: 1px solid var(--border-color);
 }
-
-#map {
-    height: 100%;
-    width: 100%;
-}
-
+#map { height: 100%; width: 100%; }
 
 .weather-card {
-    background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
-    backdrop-filter: blur(10px);
-    border-radius: 18px;
-    padding: 25px 30px;
-    margin-bottom: 25px;
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-.weather-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
-}
-
-
-.weather-card.clear {
-    background: linear-gradient(135deg, #f2994a, #f2c94c);
-    box-shadow: 0 8px 16px rgba(242, 153, 74, 0.3);
-    border: none;
-}
-
-.weather-card.clouds {
-    background: linear-gradient(135deg, #d7dde8, #757f9a); 
-    color: #333 !important; 
-    border: none;
-}
-.weather-card.clouds .city a {
-    color: #2c3e50;
-    border-bottom: 1px dashed #2c3e50;
-}
-.weather-card.clouds .delete-btn {
-    color: rgba(0,0,0,0.5);
-}
-.weather-card.clouds .delete-btn:hover {
-    color: #ff4757;
-}
-
-.weather-card.rain {
-    background: linear-gradient(135deg, #2c3e50, #4ca1af);
-    border: none;
-}
-
-.weather-card.thunder {
-    background: linear-gradient(135deg, #373b44, #4286f4);
-    border: none;
-}
-
-.weather-card.snow {
-    background: linear-gradient(135deg, #e6dada, #274046);
-    color: #fff;
-    border: none;
-}
-
-.weather-card.mist {
-    background: linear-gradient(135deg, #606c88, #3f4c6b);
-    border: none;
-}
-
-.left {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    
+    background: var(--panel-bg); 
+    border-radius: 20px; 
+    padding: 20px;
+    color: var(--text-main);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease;
+    border: 1px solid var(--border-color);
+    
+    min-height: 250px;
+    position: relative;
+    overflow: hidden;
 }
 
-.city {
-    font-size: 28px;
-    font-weight: 600;
+.weather-card:hover { 
+    transform: translateY(-5px); 
+    border-color: var(--accent-color);
 }
 
-.temp {
-    font-size: 22px;
-    font-weight: 400;
-    margin-top: 5px;
+.weather-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+    background: var(--accent-color);
+}
+.weather-card.clear::before { background: #facc15; }
+.weather-card.clouds::before { background: #94a3b8; }
+.weather-card.rain::before { background: #3b82f6; }
+.weather-card.snow::before { background: #e2e8f0; }
+.weather-card.thunder::before { background: #a855f7; }
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
 }
 
-.desc {
-    font-size: 16px;
-    opacity: 0.9;
+.card-top .left { display: flex; flex-direction: column; }
+
+.city a { 
+    font-size: 1.25rem; 
+    font-weight: 700;   
+    line-height: 1.2;
+    color: var(--text-main);
+    text-decoration: none;
+}
+.city a:hover { color: var(--accent-color); }
+
+.temp { 
+    font-size: 2.5rem; 
+    font-weight: 700; 
+    margin: 5px 0; 
+    letter-spacing: -1px;
+    color: var(--text-main);
+}
+
+.desc { 
+    font-size: 0.9rem; 
+    font-weight: 500; 
+    opacity: 0.7; 
     text-transform: capitalize;
+    color: var(--text-sub);
 }
 
-.icon img {
-    width: 85px;
-    filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1));
+.icon img { 
+    width: 70px; 
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
+}
+
+.delete-link {
+    position: absolute; 
+    top: 10px;          
+    right: 10px;        
+    z-index: 10;        
 }
 
 .delete-btn {
     background: transparent;
     border: none;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 28px;
+    color: var(--border-color); 
+    font-size: 24px;
     cursor: pointer;
-    margin-left: 15px;
-    transition: color 0.3s ease;
+    transition: 0.2s;
     line-height: 1;
+    padding: 5px; 
+}
+.delete-btn:hover { 
+    color: #ef4444; 
+    transform: scale(1.1); 
 }
 
-.delete-btn:hover {
-    color: #ff6b6b;
+.card-top .right {
+    display: flex;
+    align-items: center;
 }
 
+.card-details {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(0, 0, 0, 0.2); 
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: auto; 
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+.detail-item:not(:last-child) { border-right: 1px solid var(--border-color); }
+
+.detail-item i { 
+    font-size: 14px; 
+    margin-bottom: 4px; 
+    color: var(--accent-color); 
+}
+.detail-item .val { 
+    font-weight: 600; 
+    font-size: 14px; 
+    color: var(--text-main);
+}
+.detail-item .lbl { 
+    font-size: 10px; 
+    color: var(--text-sub); 
+    text-transform: uppercase; 
+    margin-top: 2px; 
+    letter-spacing: 0.5px;
+}
+
+.card-footer-time {
+    text-align: center; 
+    font-size: 10px;
+    color: var(--text-sub);
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+ 
 .message-box {
+    grid-column: 1 / -1;  
+    
+    width: 100%;
+    max-width: 500px;  
+    margin: 0 auto 25px auto;  
+    
     padding: 15px;
-    margin-bottom: 25px;
-    border-radius: 10px;
-    color: white;
+    border-radius: 12px;  
     text-align: center;
     font-weight: 500;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.warning { background-color: #ffa502; } 
-.error { background-color: #ff4757; }   
-.success { background-color: #2ed573; }
-.info { background-color: #1e90ff; }
-
-#geo-status {
-    text-align: center;
-    margin-bottom: 15px;
-    color: rgba(255,255,255,0.9);
     font-size: 14px;
-    min-height: 20px;
+    
+    background: var(--panel-bg); 
+    
+    
+    border: 1px solid var(--border-color); 
+}
+.warning { color: #fcd34d; }  
+.error   { color: #fca5a5; }  
+.success { color: #6ee7b7; }  
+.info    { color: #38bdf8; }  
+
+#geo-status { text-align: center; margin-bottom: 15px; color: var(--text-sub); font-size: 13px; }
+
+ .suggestions-list { 
+    position: absolute; top: 100%; left: 0; width: 100%; 
+    background: var(--panel-bg); 
+    list-style: none; z-index: 1000; 
+    border-radius: 0 0 12px 12px; 
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); 
+    border: 1px solid var(--border-color); border-top: none; 
+}
+.suggestions-list li { 
+    padding: 12px 20px; 
+    border-bottom: 1px solid var(--border-color); 
+    cursor: pointer; 
+    color: var(--text-sub); 
+    font-size: 14px; 
+}
+.suggestions-list li:hover { 
+    background: var(--bg-dark); 
+    color: var(--accent-color); 
+}
+
+div:where(.swal2-container) div:where(.swal2-popup) {
+    width: 22em !important;         /* Genişliği küçült (Daha kompakt) */
+    padding: 1.5em !important;      /* İç boşluğu azalt */
+    border-radius: 25px !important; /* Köşeleri iyice yumuşat */
+    border: 1px solid var(--border-color) !important; /* Temaya uygun ince çerçeve */
+    background: var(--panel-bg) !important; /* Senin panel renginle aynı olsun */
+}
+
+/* Başlık Yazısı */
+div:where(.swal2-container) .swal2-title {
+    font-size: 1.3rem !important;   /* Başlığı biraz kibarlaştır */
+    color: var(--text-main) !important;
+}
+
+/* İçerik Yazısı */
+div:where(.swal2-container) .swal2-html-container {
+    font-size: 0.9rem !important;
+    color: var(--text-sub) !important;
+}
+
+/* Butonlar */
+div:where(.swal2-container) .swal2-actions button {
+    border-radius: 12px !important; /* Buton köşelerini de yuvarla */
+    font-size: 0.9rem !important;
+    padding: 8px 20px !important;
 }

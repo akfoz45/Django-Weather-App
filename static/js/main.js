@@ -84,3 +84,98 @@ function resetBtn() {
     icon.style.display = "block";
     spinner.style.display = "none";
 }
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    const cityInput = document.getElementById('city-input');
+    const suggestionsList = document.getElementById('suggestions-list');
+    let debounceTimer;
+
+    if (cityInput) {
+        console.log("Autocomplete sistemi başlatıldı.");
+
+        cityInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            
+            clearTimeout(debounceTimer);
+
+            if (query.length < 2) {
+                suggestionsList.style.display = 'none';
+                return;
+            }
+
+            debounceTimer = setTimeout(() => {
+                fetchCities(query);
+            }, 300);
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target !== cityInput && e.target !== suggestionsList) {
+                suggestionsList.style.display = 'none';
+            }
+        });
+    }
+
+    function fetchCities(query) {
+        const url = `https://geocoding-api.open-meteo.com/v1/search?name=${query}&count=5&language=tr&format=json`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.results) {
+                    showSuggestions(data.results);
+                } else {
+                    suggestionsList.style.display = 'none';
+                }
+            })
+            .catch(err => console.error("API Bağlantı Hatası:", err));
+    }
+
+    function showSuggestions(cities) {
+        suggestionsList.innerHTML = ''; 
+
+        if (cities.length === 0) {
+            suggestionsList.style.display = 'none';
+            return;
+        }
+
+        cities.forEach(city => {
+            const li = document.createElement('li');
+            
+            const country = city.country ? `, ${city.country}` : '';
+            li.textContent = `${city.name}${country}`;
+            
+            li.addEventListener('click', function() {
+                cityInput.value = city.name;
+                suggestionsList.style.display = 'none';
+            });
+
+            suggestionsList.appendChild(li);
+        });
+
+        suggestionsList.style.display = 'block';
+    }
+});
+
+function confirmDelete(e, url, cityName) {
+    e.preventDefault(); // Linkin hemen çalışmasını durdur
+    
+    // SweetAlert2 Penceresi
+    Swal.fire({
+        title: 'Emin misiniz?',
+        text: `${cityName} şehrini silmek istiyor musunuz?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444', // Kırmızı
+        cancelButtonColor: '#334155', // Gri
+        confirmButtonText: 'Evet, sil!',
+        cancelButtonText: 'Vazgeç',
+        background: '#1e293b', // Senin koyu panel rengin
+        color: '#f1f5f9'       // Senin yazı rengin
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = url; 
+        }
+    });
+}

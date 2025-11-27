@@ -7,20 +7,24 @@
     <title>Hava Durumu</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1.1">
+    <link rel="shortcut icon" href="https://openweathermap.org/img/wn/02d.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5/dark.css">
 </head>
 <body>
     <div class="container">
 
         <h1 class="title">🌤 Hava Durumu</h1>
 
-        <form class="add-city-form" method="POST">
+        <form class="add-city-form" method="POST" autocomplete="off">
             {% csrf_token %}
-            <input type="text" name="name" placeholder="Şehir adı girin..." required>
+            
+            <div style="position: relative; flex: 1;">
+                <input type="text" name="name" id="city-input" placeholder="Şehir adı girin..." required>
+                <ul id="suggestions-list" class="suggestions-list"></ul>
+            </div>
             
             <button type="button" class="geo-btn" onclick="getLocation()" id="loc-btn" title="Konumumu Bul">
                 <span id="loc-icon"><i class="fas fa-map-marker-alt"></i></span>
@@ -50,44 +54,57 @@
 
         {% for weather in weather_data %}
         <div class="weather-card {{ weather.weather_class }}">
-            <div class="left">
-                <span class="city">
-                    <a href="{% url 'city_detail' weather.city.id %}" style="color: inherit; text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,0.5);" title="Detaylı Tahmin">
-                        {{ weather.city.name }}
+            
+            <div class="card-top">
+                <div class="left">
+                    <span class="city">
+                        <a href="{% url 'city_detail' weather.city.id %}" title="Detaylı Tahmin">
+                            {{ weather.city.name }}
+                        </a>
+                    </span>
+                    <span class="temp">{{ weather.temperature|floatformat:0 }}°C</span>
+                    <span class="desc">{{ weather.description }}</span>
+                </div>
+
+                <div class="right">
+                    <img src="http://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="weather-icon">
+                    <a href="#" class="delete-link" onclick="confirmDelete(event, '{% url 'delete_city' weather.city.id %}', '{{ weather.city.name|escapejs }}')">
+                        <button class="delete-btn">×</button>
                     </a>
-                </span>
-                <span class="temp">{{ weather.temperature }}°C</span>
-                <span class="desc">{{ weather.description }}</span>
-                
-                <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;">
-                    <i class="far fa-clock"></i> 
-                    {{ weather.city.last_updated|date:"H:i" }}
-                    
-                    {% if weather.error %}
-                        <br>
-                        <span style="color: #ffcccb; font-weight: bold;">
-                            ⚠️ Güncellenemedi
-                        </span>
-                    {% endif %}
                 </div>
             </div>
 
-            <div style="display: flex; align-items: center;">
-                <div class="icon">
-                    <img src="http://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="weather-icon">
+            <div class="card-details">
+                <div class="detail-item">
+                    <i class="fas fa-tint"></i>
+                    <span class="val">%{{ weather.city.humidity|default:"-" }}</span>
+                    <span class="lbl">Nem</span>
                 </div>
-                <a href="{% url 'delete_city' weather.city.id %}" style="text-decoration: none;">
-                    <button class="delete-btn" title="Şehri Sil">×</button>
-                </a>
+                <div class="detail-item">
+                    <i class="fas fa-wind"></i>
+                    <span class="val">{{ weather.city.wind_speed|floatformat:1 }} km/s</span>
+                    <span class="lbl">Rüzgar</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-temperature-low"></i>
+                    <span class="val">{{ weather.city.feels_like|floatformat:0 }}°C</span>
+                    <span class="lbl">His</span>
+                </div>
             </div>
+
+            <div class="card-footer-time">
+                <i class="far fa-clock"></i> {{ weather.city.last_updated|date:"H:i" }}
+                {% if weather.error %} <span style="color: #ffcccb;">(Güncellenemedi)</span> {% endif %}
+            </div>
+
         </div>
         {% endfor %}
 
+        <footer style="grid-column: 1 / -1; text-align: center; padding: 20px; color: var(--text-sub); font-size: 12px; margin-top: 30px; border-top: 1px solid var(--border-color);">
+            <p>Developed with  by <b>akfoz45</b> | Django Weather App</p>
+        </footer>
     </div>
-
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
-    <script src="{% static 'js/main.js' %}"></script>
 
     <script>
         const cityLocations = [
@@ -104,5 +121,8 @@
             {% endfor %}
         ];
     </script>
+
+    <script src="{% static 'js/main.js' %}?v=1.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

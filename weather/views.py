@@ -30,6 +30,9 @@ def index(request):
                             last_updated=timezone.now(),
                             lat=lat,
                             lon=lon,
+                            humidity=response['main']['humidity'],
+                            wind_speed=response['wind']['speed'],
+                            feels_like=response['main']['feels_like'],
                         )
                     messages.success(request, f"Konumunuz ({city_name}) başarıyla eklendi.")
                 else:
@@ -60,7 +63,10 @@ def index(request):
                             last_updated=timezone.now(),
                             lat=response['coord']['lat'],
                             lon=response['coord']['lon'],
-                        )
+                            humidity=response['main']['humidity'],
+                            wind_speed=response['wind']['speed'],
+                            feels_like=response['main']['feels_like'],
+                        )   
                         messages.success(request, f"{city_name_formatted} başarıyla eklendi.")
                     else:
                         messages.warning(request, "Böyle bir şehir bulunamadı. Lütfen ismi kontrol edin.")
@@ -88,6 +94,9 @@ def index(request):
                     city.description = data['weather'][0]['description']
                     city.icon = data['weather'][0]['icon']
                     city.last_updated = timezone.now()
+                    city.humidity = data['main']['humidity']
+                    city.wind_speed = data['wind']['speed']
+                    city.feels_like = data['main']['feels_like']
                     city.save()
                 else:
                     error = True

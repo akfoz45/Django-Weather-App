@@ -8,6 +8,9 @@ class City(models.Model):
     last_updated = models.DateTimeField(null=True, blank=True)
     lat = models.CharField(null=True, blank=True)
     lon = models.CharField(null=True, blank=True)
+    humidity = models.IntegerField(null=True, blank=True)
+    wind_speed = models.FloatField(null=True, blank=True)
+    feels_like = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return self.name
