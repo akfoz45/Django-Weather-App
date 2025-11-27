@@ -320,20 +320,18 @@ body {
 }
 
 div:where(.swal2-container) div:where(.swal2-popup) {
-    width: 22em !important;         /* Genişliği küçült (Daha kompakt) */
-    padding: 1.5em !important;      /* İç boşluğu azalt */
-    border-radius: 25px !important; /* Köşeleri iyice yumuşat */
-    border: 1px solid var(--border-color) !important; /* Temaya uygun ince çerçeve */
-    background: var(--panel-bg) !important; /* Senin panel renginle aynı olsun */
+    width: 22em !important;         
+    padding: 1.5em !important;      
+    border-radius: 25px !important; 
+    border: 1px solid var(--border-color) !important; 
+    background: var(--panel-bg) !important; 
 }
 
-/* Başlık Yazısı */
 div:where(.swal2-container) .swal2-title {
-    font-size: 1.3rem !important;   /* Başlığı biraz kibarlaştır */
+    font-size: 1.3rem !important;   
     color: var(--text-main) !important;
 }
 
-/* İçerik Yazısı */
 div:where(.swal2-container) .swal2-html-container {
     font-size: 0.9rem !important;
     color: var(--text-sub) !important;
@@ -341,7 +339,7 @@ div:where(.swal2-container) .swal2-html-container {
 
 /* Butonlar */
 div:where(.swal2-container) .swal2-actions button {
-    border-radius: 12px !important; /* Buton köşelerini de yuvarla */
+    border-radius: 12px !important; 
     font-size: 0.9rem !important;
     padding: 8px 20px !important;
 }
